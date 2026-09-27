@@ -58,6 +58,11 @@ class SpirvShader : public Shader {
     return sampler_bindings_;
   }
 
+  void SetBindingsFromCache(std::vector<TextureBinding> tb, std::vector<SamplerBinding> sb) {
+    texture_bindings_ = std::move(tb);
+    sampler_bindings_ = std::move(sb);
+  }
+
  protected:
   Translation* CreateTranslationInstance(uint64_t modification) override;
 

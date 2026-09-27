@@ -14,6 +14,7 @@ class AndroidStorage {
 
   static std::filesystem::path GetInternalPath();
   static std::filesystem::path GetExternalPath();
+  static std::filesystem::path GetMediaPath();
   static std::filesystem::path FindGameDataRoot();
 
   static void ConfigureAppPaths(rex::PathConfig& paths);
@@ -21,6 +22,7 @@ class AndroidStorage {
  private:
   static std::filesystem::path internal_path_;
   static std::filesystem::path external_path_;
+  static std::filesystem::path media_path_;
 };
 
 }  // namespace rex::vfs::android

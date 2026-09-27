@@ -27,6 +27,7 @@
 #include <utility>
 #include <vector>
 
+#include <rex/graphics/pipeline/shader/prebaked_shader_cache.h>
 #include <rex/graphics/pipeline/shader/spirv_translator.h>
 #include <rex/hash.h>
 #include <rex/platform.h>
@@ -68,6 +69,8 @@ class VulkanPipelineCache {
   void InitializeShaderStorage(const std::filesystem::path& cache_root, uint32_t title_id,
                                bool blocking);
   void ShutdownShaderStorage();
+  void SaveHardwarePipelineCache();
+  VkPipelineCache hardware_pipeline_cache() const { return hardware_pipeline_cache_; }
   void EndSubmission();
 
   VulkanShader* LoadShader(xenos::ShaderType shader_type, const uint32_t* host_address,

@@ -41,10 +41,15 @@ class NfsmwAndroidApp final : public NfsmwApp {
   }
 
   void OnPostSetup() override {
+    bool user_configured =
+        rex::cvar::GetFlagSource("readback_resolve") == rex::cvar::Source::kConfig;
     NfsmwApp::OnPostSetup();
 
-    // Explicitly enforce readback_resolve as none on mobile to avoid GPU pipeline stalls
-    rex::cvar::SetFlagByName("readback_resolve", "fast");
+    // Explicitly enforce readback_resolve as none on mobile unless configured by user,
+    // avoiding severe GPU->CPU pipeline stalls
+    if (!user_configured) {
+      rex::cvar::SetFlagByName("readback_resolve", "none");
+    }
 
     auto* kernel = rex::system::kernel_state();
     if (kernel) {

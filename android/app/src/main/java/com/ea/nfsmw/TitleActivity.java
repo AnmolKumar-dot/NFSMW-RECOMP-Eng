@@ -1027,7 +1027,7 @@ public class TitleActivity extends Activity {
             if (!shaderDir.exists()) {
                 shaderDir.mkdirs();
             }
-            String[] shaderFiles = new String[] { "454107D9.xsh", "454107D9.fbo.vk.xpso" };
+            String[] shaderFiles = new String[] { "454107D9.xsh", "454107D9.fbo.vk.xpso", "454107D9_prebaked.spvcache", "454107D9_hw.vkcache" };
             for (String fileName : shaderFiles) {
                 File target = new File(shaderDir, fileName);
                 try (java.io.InputStream in = getAssets().open("shaders/shareable/" + fileName)) {

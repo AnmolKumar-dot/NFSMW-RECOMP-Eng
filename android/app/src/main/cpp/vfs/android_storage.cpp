@@ -12,13 +12,45 @@ namespace rex::vfs::android {
 
 std::filesystem::path AndroidStorage::internal_path_{};
 std::filesystem::path AndroidStorage::external_path_{};
+std::filesystem::path AndroidStorage::media_path_{};
 
 void AndroidStorage::Initialize(const std::string& internal_data_path,
                                 const std::string& external_data_path) {
   internal_path_ = internal_data_path;
   external_path_ = external_data_path;
-  LOGI("AndroidStorage initialized: internal=%s, external=%s",
-       internal_path_.c_str(), external_path_.c_str());
+
+  // Derive Android/media directory from external path:
+  // e.g. /storage/emulated/0/Android/data/<pkg>/files -> /storage/emulated/0/Android/media/<pkg>
+  media_path_.clear();
+  if (!external_path_.empty()) {
+    std::string str = external_path_.string();
+    const std::string marker = "/Android/data/";
+    size_t marker_pos = str.find(marker);
+    if (marker_pos != std::string::npos) {
+      size_t pkg_begin = marker_pos + marker.size();
+      size_t pkg_end = str.find('/', pkg_begin);
+      std::string pkg = (pkg_end == std::string::npos)
+          ? str.substr(pkg_begin)
+          : str.substr(pkg_begin, pkg_end - pkg_begin);
+      if (!pkg.empty()) {
+        media_path_ = std::filesystem::path(str.substr(0, marker_pos)) / "Android" / "media" / pkg;
+      }
+    }
+  }
+
+  std::error_code ec;
+  if (!media_path_.empty()) {
+    std::filesystem::create_directories(media_path_, ec);
+    std::filesystem::create_directories(media_path_ / "driver_import", ec);
+    std::filesystem::create_directories(media_path_ / "turnip", ec);
+  }
+  if (!external_path_.empty()) {
+    std::filesystem::create_directories(external_path_ / "driver_import", ec);
+    std::filesystem::create_directories(external_path_ / "turnip", ec);
+  }
+
+  LOGI("AndroidStorage initialized: internal=%s, external=%s, media=%s",
+       internal_path_.c_str(), external_path_.c_str(), media_path_.c_str());
 }
 
 std::filesystem::path AndroidStorage::GetInternalPath() {
@@ -29,11 +61,16 @@ std::filesystem::path AndroidStorage::GetExternalPath() {
   return external_path_;
 }
 
+std::filesystem::path AndroidStorage::GetMediaPath() {
+  return media_path_;
+}
+
 std::filesystem::path AndroidStorage::FindGameDataRoot() {
   std::error_code ec;
 
   // 0. Check if a custom path was configured by the user via TitleActivity
   const std::filesystem::path config_files[] = {
+      media_path_ / "selected_game_path.txt",
       external_path_ / "selected_game_path.txt",
       internal_path_ / "selected_game_path.txt"
   };
@@ -58,6 +95,8 @@ std::filesystem::path AndroidStorage::FindGameDataRoot() {
   }
 
   std::vector<std::filesystem::path> search_dirs = {
+      media_path_,
+      media_path_ / "NFSMW",
       external_path_,
       internal_path_,
       "/sdcard/NFSMW",

@@ -24,6 +24,7 @@ class AndroidWindow final : public Window {
   static AndroidWindow* GetActiveWindow();
 
   ANativeWindow* native_window() const { return native_window_; }
+  void* GetNativeWindowHandle() const override { return native_window_; }
 
  protected:
   bool OpenImpl() override;

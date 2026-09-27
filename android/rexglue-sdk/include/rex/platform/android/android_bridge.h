@@ -12,8 +12,9 @@
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 
-#include <rex/ui/window_android.h>
-#include <rex/input/android/android_input_driver.h>
+namespace rex::ui {
+class WindowAndroid;
+}
 
 namespace rex::platform::android {
 
@@ -21,6 +22,9 @@ class AndroidBridge {
  public:
   static void SetActiveWindow(rex::ui::WindowAndroid* window);
   static rex::ui::WindowAndroid* GetActiveWindow();
+
+  static void SetNativeWindow(ANativeWindow* window);
+  static ANativeWindow* GetNativeWindow();
 
   static void OnSurfaceCreated(ANativeWindow* native_window);
   static void OnSurfaceDestroyed();

@@ -779,6 +779,12 @@ class Shader {
     // Translated shader binary (or text).
     const std::vector<uint8_t>& translated_binary() const { return translated_binary_; }
 
+    void SetPrebakedBinary(std::vector<uint8_t> binary) {
+      translated_binary_ = std::move(binary);
+      is_translated_ = true;
+      is_valid_ = !translated_binary_.empty();
+    }
+
     // Gets the translated shader binary as a string.
     // This is only valid if it is actually text.
     std::string GetTranslatedBinaryString() const;

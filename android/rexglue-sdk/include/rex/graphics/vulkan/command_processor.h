@@ -244,6 +244,10 @@ class VulkanCommandProcessor : public CommandProcessor {
   // Returns the text to display in the GPU backend name in the window title.
   std::string GetWindowTitleText() const;
 
+  VulkanPipelineCache* pipeline_cache() const { return pipeline_cache_.get(); }
+  VulkanRenderTargetCache* render_target_cache() const { return render_target_cache_.get(); }
+  VulkanTextureCache* texture_cache() const { return texture_cache_.get(); }
+
  protected:
   bool SetupContext() override;
   void ShutdownContext() override;

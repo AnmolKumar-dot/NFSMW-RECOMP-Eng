@@ -1,6 +1,7 @@
 #include "android_window.h"
 #include "android_app_context.h"
 #include <android/log.h>
+#include <rex/platform/android/android_bridge.h>
 
 #define TAG "NFS-AndroidWindow"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__)
@@ -35,6 +36,7 @@ AndroidWindow::~AndroidWindow() {
 void AndroidWindow::AttachNativeWindow(ANativeWindow* window) {
   native_window_ = window;
   is_attached_ = (window != nullptr);
+  rex::platform::android::AndroidBridge::SetNativeWindow(window);
 
   if (native_window_) {
     int32_t w = ANativeWindow_getWidth(native_window_);
@@ -51,6 +53,7 @@ void AndroidWindow::AttachNativeWindow(ANativeWindow* window) {
 void AndroidWindow::DetachNativeWindow() {
   native_window_ = nullptr;
   is_attached_ = false;
+  rex::platform::android::AndroidBridge::SetNativeWindow(nullptr);
   OnSurfaceChanged(false);
 }
 
