@@ -69,7 +69,7 @@ class VulkanPipelineCache {
   void InitializeShaderStorage(const std::filesystem::path& cache_root, uint32_t title_id,
                                bool blocking);
   void ShutdownShaderStorage();
-  void SaveHardwarePipelineCache();
+  void SaveHardwarePipelineCache(bool force = false);
   VkPipelineCache hardware_pipeline_cache() const { return hardware_pipeline_cache_; }
   void EndSubmission();
 

@@ -61,6 +61,10 @@ class SpirvShader : public Shader {
   void SetBindingsFromCache(std::vector<TextureBinding> tb, std::vector<SamplerBinding> sb) {
     texture_bindings_ = std::move(tb);
     sampler_bindings_ = std::move(sb);
+    used_texture_mask_ = 0;
+    for (const auto& binding : texture_bindings_) {
+      used_texture_mask_ |= UINT32_C(1) << binding.fetch_constant;
+    }
   }
 
  protected:
