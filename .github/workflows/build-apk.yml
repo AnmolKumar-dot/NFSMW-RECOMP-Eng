@@ -59,45 +59,49 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "=== Obtendo última release do ReXGlue SDK de WINDROID-EMU/RunTime ==="
-          mkdir -p /tmp/sdk-download
-          
-          # Tenta baixar usando GitHub CLI (já presente nos runners ubuntu-latest)
-          if command -v gh &>/dev/null; then
-            echo "Tentando baixar via gh CLI..."
-            gh release download --repo WINDROID-EMU/RunTime --pattern "*android-arm64.zip" --dir /tmp/sdk-download || true
-          fi
-
-          ZIP_FILE=$(find /tmp/sdk-download -name "*android-arm64.zip" | head -n 1)
-
-          # Se gh falhar ou não encontrar, faz fallback com curl
-          if [ -z "$ZIP_FILE" ]; then
-            echo "Tentando baixar via curl/API do GitHub..."
-            SDK_URL=$(curl -sL https://api.github.com/repos/WINDROID-EMU/RunTime/releases/latest \
-              | grep "browser_download_url.*android-arm64.zip" \
-              | head -n 1 \
-              | cut -d '"' -f 4)
-            if [ -n "$SDK_URL" ]; then
-              echo "Baixando asset de: $SDK_URL"
-              curl -sL -o /tmp/sdk-download/rexglue-sdk.zip "$SDK_URL"
-              ZIP_FILE="/tmp/sdk-download/rexglue-sdk.zip"
-            fi
-          fi
-
-          if [ -z "$ZIP_FILE" ] || [ ! -f "$ZIP_FILE" ]; then
-            echo "::warning title=ReXGlue SDK::Não foi possível baixar o SDK de WINDROID-EMU/RunTime. Verificando se já existe localmente..."
+          if [ -d "android/rexglue-sdk" ] && [ -f "android/rexglue-sdk/lib/cmake/rexglue/rexglueConfig.cmake" ]; then
+            echo "ReXGlue SDK já presente no repositório. Mantendo versão sincronizada."
           else
-            echo "Extraindo ReXGlue SDK ($ZIP_FILE)..."
-            mkdir -p /tmp/sdk-extracted
-            unzip -q -o "$ZIP_FILE" -d /tmp/sdk-extracted
-            rm -rf android/rexglue-sdk
-            mkdir -p android/rexglue-sdk
-            if [ -d "/tmp/sdk-extracted/android-arm64" ]; then
-              cp -r /tmp/sdk-extracted/android-arm64/* android/rexglue-sdk/
-            else
-              cp -r /tmp/sdk-extracted/* android/rexglue-sdk/
+            echo "=== Obtendo última release do ReXGlue SDK de WINDROID-EMU/RunTime ==="
+            mkdir -p /tmp/sdk-download
+            
+            # Tenta baixar usando GitHub CLI (já presente nos runners ubuntu-latest)
+            if command -v gh &>/dev/null; then
+              echo "Tentando baixar via gh CLI..."
+              gh release download --repo WINDROID-EMU/RunTime --pattern "*android-arm64.zip" --dir /tmp/sdk-download || true
             fi
-            rm -rf /tmp/sdk-download /tmp/sdk-extracted
+
+            ZIP_FILE=$(find /tmp/sdk-download -name "*android-arm64.zip" | head -n 1)
+
+            # Se gh falhar ou não encontrar, faz fallback com curl
+            if [ -z "$ZIP_FILE" ]; then
+              echo "Tentando baixar via curl/API do GitHub..."
+              SDK_URL=$(curl -sL https://api.github.com/repos/WINDROID-EMU/RunTime/releases/latest \
+                | grep "browser_download_url.*android-arm64.zip" \
+                | head -n 1 \
+                | cut -d '"' -f 4)
+              if [ -n "$SDK_URL" ]; then
+                echo "Baixando asset de: $SDK_URL"
+                curl -sL -o /tmp/sdk-download/rexglue-sdk.zip "$SDK_URL"
+                ZIP_FILE="/tmp/sdk-download/rexglue-sdk.zip"
+              fi
+            fi
+
+            if [ -z "$ZIP_FILE" ] || [ ! -f "$ZIP_FILE" ]; then
+              echo "::warning title=ReXGlue SDK::Não foi possível baixar o SDK de WINDROID-EMU/RunTime. Verificando se já existe localmente..."
+            else
+              echo "Extraindo ReXGlue SDK ($ZIP_FILE)..."
+              mkdir -p /tmp/sdk-extracted
+              unzip -q -o "$ZIP_FILE" -d /tmp/sdk-extracted
+              rm -rf android/rexglue-sdk
+              mkdir -p android/rexglue-sdk
+              if [ -d "/tmp/sdk-extracted/android-arm64" ]; then
+                cp -r /tmp/sdk-extracted/android-arm64/* android/rexglue-sdk/
+              else
+                cp -r /tmp/sdk-extracted/* android/rexglue-sdk/
+              fi
+              rm -rf /tmp/sdk-download /tmp/sdk-extracted
+            fi
           fi
 
           if [ ! -d "android/rexglue-sdk" ] || [ ! -f "android/rexglue-sdk/lib/cmake/rexglue/rexglueConfig.cmake" ]; then
@@ -110,6 +114,7 @@ jobs:
               echo "Sincronizando bibliotecas do SDK com jniLibs..."
               cp -f android/rexglue-sdk/lib/librexruntime.so android/app/src/main/jniLibs/arm64-v8a/ 2>/dev/null || true
               cp -f android/rexglue-sdk/lib/librexgpu-xenos.so android/app/src/main/jniLibs/arm64-v8a/ 2>/dev/null || true
+              cp -f android/rexglue-sdk/lib/librexgpu-plume.so android/app/src/main/jniLibs/arm64-v8a/ 2>/dev/null || true
             fi
           fi
 
