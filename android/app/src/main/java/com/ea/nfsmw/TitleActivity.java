@@ -374,13 +374,13 @@ public class TitleActivity extends Activity {
                     extractTurnipFromStream(is, pendingTurnipStatusView);
                 } else {
                     Toast.makeText(this,
-                        "Não foi possível abrir o arquivo ZIP.",
+                        "Could not open the ZIP file.",
                         Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 android.util.Log.e("NFS-Turnip", "Failed to open ZIP URI", e);
                 Toast.makeText(this,
-                    "Erro ao abrir ZIP: " + e.getMessage(),
+                    "Error opening ZIP: " + e.getMessage(),
                     Toast.LENGTH_LONG).show();
             }
             pendingTurnipStatusView = null;
@@ -400,16 +400,16 @@ public class TitleActivity extends Activity {
             File target = new File(resolvedPath);
             if (verifyGameFiles(target)) {
                 applyVerifiedGamePath(resolvedPath, true);
-                Toast.makeText(this, "✔ Arquivos do jogo verificados com sucesso!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "✔ Game files verified successfully!", Toast.LENGTH_SHORT).show();
             } else {
                 new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
-                        .setTitle("Arquivos Inválidos")
+                        .setTitle("Invalid Files")
                         .setMessage(R.string.error_files_missing)
                         .setPositiveButton("OK", null)
                         .show();
             }
         } else {
-            Toast.makeText(this, "Não foi possível resolver o caminho da pasta selecionada.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Could not resolve the selected folder path.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -485,7 +485,7 @@ public class TitleActivity extends Activity {
 
         // Se o jogo ainda não foi verificado, orienta o usuário a selecionar
         if (verifiedGamePath == null) {
-            Toast.makeText(this, "Selecione o local da ROM ou pasta do jogo antes de iniciar.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Select the ROM location or game folder before starting.", Toast.LENGTH_SHORT).show();
             showPickerSelectionDialog();
             return;
         }
@@ -561,10 +561,10 @@ public class TitleActivity extends Activity {
         File so = getTurnipSo();
         if (so.exists() && so.length() > 0) {
             long kb = so.length() / 1024;
-            statusView.setText("✅ Driver instalado: " + TURNIP_FILENAME + " (" + kb + " KB)");
+            statusView.setText("✅ Driver installed: " + TURNIP_FILENAME + " (" + kb + " KB)");
             statusView.setTextColor(Color.parseColor("#4CAF50"));
         } else {
-            statusView.setText("● Driver: usando sistema (padrão — sem Turnip)");
+            statusView.setText("● Driver: using system (default — no Turnip)");
             statusView.setTextColor(Color.parseColor("#A0A0A0"));
         }
     }
@@ -577,7 +577,7 @@ public class TitleActivity extends Activity {
     private boolean extractTurnipFromStream(InputStream inputStream, TextView statusView) {
         File dir = getTurnipDir();
         if (!dir.exists() && !dir.mkdirs()) {
-            Toast.makeText(this, "Falha ao criar pasta turnip/", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to create turnip/ folder", Toast.LENGTH_SHORT).show();
             return false;
         }
         File dest = getTurnipSo();
@@ -599,7 +599,7 @@ public class TitleActivity extends Activity {
                     zis.closeEntry();
                     refreshTurnipStatus(statusView);
                     Toast.makeText(this,
-                        "✅ Driver Turnip instalado! Reinicie o jogo.",
+                        "✅ Turnip driver installed! Restart the game.",
                         Toast.LENGTH_LONG).show();
                     return true;
                 }
@@ -608,12 +608,12 @@ public class TitleActivity extends Activity {
         } catch (Exception e) {
             android.util.Log.e("NFS-Turnip", "ZIP extraction failed", e);
             Toast.makeText(this,
-                "Erro ao extrair o ZIP: " + e.getMessage(),
+                "Error extracting ZIP: " + e.getMessage(),
                 Toast.LENGTH_LONG).show();
             return false;
         }
         Toast.makeText(this,
-            "Nenhum arquivo .so encontrado no ZIP selecionado.",
+            "No .so file found in the selected ZIP.",
             Toast.LENGTH_LONG).show();
         return false;
     }
@@ -622,25 +622,25 @@ public class TitleActivity extends Activity {
     private void removeTurnipDriver(TextView statusView) {
         File so = getTurnipSo();
         if (!so.exists()) {
-            Toast.makeText(this, "Nenhum driver Turnip instalado.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No Turnip driver installed.", Toast.LENGTH_SHORT).show();
             return;
         }
         new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
-            .setTitle("Remover Driver Turnip")
-            .setMessage("Tem certeza? O driver de sistema (padrão) será usado na próxima execução.")
-            .setPositiveButton("Remover", (d, w) -> {
+            .setTitle("Remove Turnip Driver")
+            .setMessage("Are you sure? The system driver (default) will be used on next launch.")
+            .setPositiveButton("Remove", (d, w) -> {
                 if (so.delete()) {
                     refreshTurnipStatus(statusView);
                     Toast.makeText(this,
-                        "Driver Turnip removido. Reinicie o jogo.",
+                        "Turnip driver removed. Restart the game.",
                         Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this,
-                        "Falha ao remover o driver.",
+                        "Failed to remove the driver.",
                         Toast.LENGTH_SHORT).show();
                 }
             })
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton("Cancel", null)
             .show();
     }
 
@@ -686,31 +686,31 @@ public class TitleActivity extends Activity {
         EditText etGamertag = dialogView.findViewById(R.id.et_gamertag);
 
         // Options arrays
-        final String[] resLabels = {"720p (1280x720 - Nativo Xbox 360)", "540p (960x540 - Modo Performance / +44% FPS)", "480p (854x480 - Mais Leve)", "1080p (1920x1080 - Full HD)"};
+        final String[] resLabels = {"720p (1280x720 - Native Xbox 360)", "540p (960x540 - Performance Mode / +44% FPS)", "480p (854x480 - Lightest)", "1080p (1920x1080 - Full HD)"};
         final String[] resValues = {"720p", "540p", "480p", "1080p"};
 
-        final String[] scaleLabels = {"1x - Nativo (Mais rápido)", "2x - 1440p (Alta Nitidez)", "3x - 4K"};
+        final String[] scaleLabels = {"1x - Native (Fastest)", "2x - 1440p (High Sharpness)", "3x - 4K"};
         final int[] scaleValues = {1, 2, 3};
 
-        final String[] pluginLabels = {"Plume (Vulkan Nativo - Rápido)", "Xenos (Vulkan Emulado)"};
+        final String[] pluginLabels = {"Plume (Native Vulkan - Fast)", "Xenos (Emulated Vulkan)"};
         final String[] pluginValues = {"plume", "xenos"};
 
-        final String[] edramLabels = {"rtv (FBO Host - Rápido / Recomendado)", "rov (Pixel Shader Interlock - Lento)"};
+        final String[] edramLabels = {"rtv (FBO Host - Fast / Recommended)", "rov (Pixel Shader Interlock - Slow)"};
         final String[] edramValues = {"rtv", "rov"};
 
-        final String[] threadLabels = {"1 Thread (Economia de Bateria)", "2 Threads (Recomendado - Frio & Estável)", "4 Threads (Compilação Rápida)", "Automático (-1)"};
+        final String[] threadLabels = {"1 Thread (Battery Saver)", "2 Threads (Recommended - Cool & Stable)", "4 Threads (Fast Compilation)", "Automatic (-1)"};
         final int[] threadValues = {1, 2, 4, -1};
 
-        final String[] cacheLabels = {"256 MB (Celulares 4GB RAM - Evita OOM)", "384 MB (Equilibrado)", "512 MB (Recomendado / Padrão)", "768 MB (Celulares 8GB+ RAM)"};
+        final String[] cacheLabels = {"256 MB (4GB RAM Phones - Avoids OOM)", "384 MB (Balanced)", "512 MB (Recommended / Default)", "768 MB (8GB+ RAM Phones)"};
         final int[] cacheValues = {256, 384, 512, 768};
 
-        final String[] anisoLabels = {"Desativado (0x)", "1x", "2x (Recomendado)", "4x", "8x", "16x"};
+        final String[] anisoLabels = {"Disabled (0x)", "1x", "2x (Recommended)", "4x", "8x", "16x"};
         final int[] anisoValues = {0, 1, 2, 4, 8, 16};
 
-        final String[] aaLabels = {"Desativado (none)", "FXAA (Recomendado)", "FXAA Extreme"};
+        final String[] aaLabels = {"Disabled (none)", "FXAA (Recommended)", "FXAA Extreme"};
         final String[] aaValues = {"none", "fxaa", "fxaa_extreme"};
 
-        final String[] logLabels = {"Erro (Desempenho Máximo / Menos I/O)", "Aviso (Warning)", "Informação (Info - Padrão)", "Depuração (Debug)"};
+        final String[] logLabels = {"Error (Max Performance / Less I/O)", "Warning", "Information (Info - Default)", "Debug"};
         final String[] logValues = {"error", "warning", "info", "debug"};
 
         // Set adapters
@@ -770,11 +770,11 @@ public class TitleActivity extends Activity {
         }
         sbGameSpeed.setMax(200);
         sbGameSpeed.setProgress(curSpeed);
-        tvGameSpeed.setText("Velocidade da Simulação: " + curSpeed + "%");
+        tvGameSpeed.setText("Simulation Speed: " + curSpeed + "%");
         sbGameSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 int val = Math.max(20, progress);
-                tvGameSpeed.setText("Velocidade da Simulação: " + val + "%");
+                tvGameSpeed.setText("Simulation Speed: " + val + "%");
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -835,7 +835,7 @@ public class TitleActivity extends Activity {
                 swGrantPrivileges.setChecked(false);
                 sbGameSpeed.setProgress(100);
                 etGamertag.setText("Player");
-                Toast.makeText(TitleActivity.this, "Padrões otimizados para Android restaurados.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TitleActivity.this, "Optimized Android defaults restored.", Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -894,7 +894,7 @@ public class TitleActivity extends Activity {
                         .apply();
 
                 writeTomlConfiguration(true);
-                Toast.makeText(TitleActivity.this, "Configurações salvas e aplicadas ao jogo!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TitleActivity.this, "Settings saved and applied to the game!", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             });
         }
