@@ -60,7 +60,7 @@
                 android:letterSpacing="0.05"
                 android:paddingStart="14dp"
                 android:paddingEnd="14dp"
-                android:text="⚙ CONFIGURAÇÕES"
+                android:text="⚙ SETTINGS"
                 android:textColor="@color/nfsmw_amber"
                 android:textSize="12sp"
                 android:textStyle="bold" />
